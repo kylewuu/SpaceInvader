@@ -2,7 +2,6 @@
 var canvas;
 var gl;
 
-
 window.onload = function init() {
 
     canvas = document.getElementById( "gl-canvas" );
@@ -33,12 +32,36 @@ window.onload = function init() {
 };
 
 //-------------------------------------------------------------------------------
+//key listener
+
+var leftPressed = 0;
+var rightPressed=0;
+window.addEventListener("keydown", keyDown, false); //for detecting keydown
+window.addEventListener("keyup", keyUp, false); //for detecting key up
+function keyDown(key) {
+  if (key.key == "ArrowLeft"){
+    leftPressed=1;
+  }
+  if (key.key == "ArrowRight"){
+    rightPressed=1;
+  }
+}
+function keyUp(key) {
+  if (key.key == "ArrowLeft"){
+    leftPressed=0;
+  }
+  if (key.key == "ArrowRight"){
+    rightPressed=0;
+  }
+}
+
 //vairables involved in drawing the game
 var redWidth= 0.1;
 var maxX= 1-redWidth;
 var minX= -1+redWidth;
 var redDownSpeed= 2000; //changes the time between each interval of it coming down
-var redBoxRandomness=500; //changes how frequently you want the boxes to change directions
+var redBoxRandomness=100; //changes how frequently you want the boxes to change directions
+var redBoxXSpeed=0.01;
 
 //first row
 var firstRowY=0.95;
@@ -51,6 +74,13 @@ var secondRowY= 0.70;
 var secondRowX=new Array(5);
 var secondRowXDirection=new Array(5);
 
+//player controlled greenbox
+var greenSpeed= 0.01;
+var greenWidth=redWidth;
+var greenX=-0.05; //green starting location
+var greenY=(-1+2*greenWidth);
+
+
 //for loop for filling up the arrays
 for(var i=0;i<5;i++){
 	firstRowX[i]= (Math.random()*(maxX-minX)+minX);
@@ -60,8 +90,6 @@ for(var i=0;i<5;i++){
 	firstRowXDirection[i]=Math.floor(Math.random()*(2)); //fils it up with 1 or -1
 	secondRowXDirection[i]=Math.floor(Math.random()*(2)); //fills it up with 1 or -1
 }
-
-
 
 //for moving the boxes down
 setInterval(function(){
@@ -145,6 +173,14 @@ function render() {
 		vec2 (secondRowX[4]+redWidth, secondRowY-(2*redWidth)),
 		vec2 (secondRowX[4], secondRowY-(2*redWidth)),
 
+    //greenbox, player controlled
+    vec2 (greenX, greenY),
+		vec2 (greenX+greenWidth, greenY),
+		vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
+		vec2 (greenX, greenY),
+		vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
+		vec2 (greenX, greenY-(2*greenWidth)),
+
 	];
 
 
@@ -152,19 +188,19 @@ function render() {
 	for(var j=0; j<5;j++){
 
 		if(firstRowXDirection[j]==1){
-			firstRowX[j]+=0.001;
+			firstRowX[j]+=redBoxXSpeed;
 
 		}
 		else if(firstRowXDirection[j]==0){
-			firstRowX[j]-=0.001;
+			firstRowX[j]-=redBoxXSpeed;
 		}
 
 		if(secondRowXDirection[j]==1){
-			secondRowX[j]+=0.001;
+			secondRowX[j]+=redBoxXSpeed;
 
 		}
 		else if(secondRowXDirection[j]==0){
-			secondRowX[j]-=0.001;
+			secondRowX[j]-=redBoxXSpeed;
 		}
 
 		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (firstRowX[j])<=(minX-redWidth) || firstRowX[j]>= maxX){
@@ -185,6 +221,14 @@ function render() {
 		}
 
 	}
+
+  //moving the green box
+  if (leftPressed==1){
+    greenX-=greenSpeed;
+  }
+  if (rightPressed==1){
+    greenX+=greenSpeed;
+  }
 
 
 

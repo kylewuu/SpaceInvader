@@ -81,6 +81,7 @@ var greenX=-0.05; //green starting location
 var greenY=(-1+2*greenWidth);
 
 
+
 //for loop for filling up the arrays
 for(var i=0;i<5;i++){
 	firstRowX[i]= (Math.random()*(maxX-minX)+minX);
@@ -102,7 +103,7 @@ setInterval(function(){
 function render() {
 
 	// Six Vertices
-	var vertices = [
+	var boxes = [
 		vec2 (firstRowX[0], firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY-(2*redWidth)),
@@ -237,9 +238,14 @@ function render() {
 
 	// Binding the vertex buffer
 	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-	gl.bufferData( gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW );
+  gl.clear( gl.COLOR_BUFFER_BIT );
 
-	gl.clear( gl.COLOR_BUFFER_BIT );
-  gl.drawArrays( gl.TRIANGLES, 0, vertices.length ); //changed to length so that it's not hard coded in and will self update
-	window.requestAnimationFrame(render);
+  //boxes
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(boxes), gl.STATIC_DRAW );
+  gl.drawArrays( gl.TRIANGLES, 0, boxes.length ); //changed to length so that it's not hard coded in and will self update
+
+  //bullets
+
+
+  window.requestAnimationFrame(render);
 }

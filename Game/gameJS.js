@@ -240,6 +240,51 @@ function render() {
 	}
 	bulletStopper+=1; //counts up
 
+	//checking for COLLISION NOT WORKING FOR NOW
+	for(var i=0;i<greenBullets.length;i++){
+		for(var j=0;j<firstRowX.length;j++){
+			if(greenBullets[i][0]>=firstRowX[j] && greenBullets[i][0]<=firstRowX[j]+redWidth && greenBullets[i][1]>=firstRowY-redWidth && greenBullets[i][1]<=firstRowY){
+				if(i%3==0){
+					greenBullets.splice(i,1);
+					greenBullets.splice(i+1,1);
+					greenBullets.splice(i+1,1);
+				}
+				else if(i%3==1){
+					greenBullets.splice(i-1,1);
+					greenBullets.splice(i,1);
+					greenBullets.splice(i+1,1);
+				}
+				else if(i%3==2){
+					greenBullets.splice(i-2,1);
+					greenBullets.splice(i-1,1);
+					greenBullets.splice(i,1);
+				}
+			}
+		}
+		for(var j2=0;j2<secondRowX.length;j2++){
+			if(greenBullets[i][0]>=secondRowX[j2] && greenBullets[i][0]<=secondRowX[j2]+redWidth && greenBullets[i][1]>=secondRowY-redWidth && greenBullets[i][1]<=secondRowY){
+				if(i%3==0){
+					greenBullets.splice(i,1);
+					greenBullets.splice(i+1,1);
+					greenBullets.splice(i+1,1);
+				}
+				else if(i%3==1){
+					greenBullets.splice(i-1,1);
+					greenBullets.splice(i,1);
+					greenBullets.splice(i+1,1);
+				}
+				else if(i%3==2){
+					greenBullets.splice(i-2,1);
+					greenBullets.splice(i-1,1);
+					greenBullets.splice(i,1);
+				}
+			}
+		}
+
+	}
+
+
+
 	//moving the boxes side to side randomly
 	for(var j=0; j<redBoxNum;j++){
 
@@ -345,7 +390,7 @@ function render() {
 		gl.drawArrays( gl.TRIANGLES, 0, greenBullets.length );
 
 		//removing the Vertices
-		if((greenBullets[greenBullets.length-2][1])>=0.8){ //finds the heighest bullet
+		if((greenBullets[greenBullets.length-2][1])>=1){ //finds the heighest bullet
 			greenBullets.pop();//pops three times to get rid of all three vertices
 			greenBullets.pop();
 			greenBullets.pop();

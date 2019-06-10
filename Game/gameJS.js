@@ -2,6 +2,11 @@
 var canvas;
 var gl;
 
+var colors = [
+    vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
+    vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
+];
+
 window.onload = function init() {
 
     canvas = document.getElementById( "gl-canvas" );
@@ -28,11 +33,14 @@ window.onload = function init() {
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
+
+
+
     render();
 };
 
 //-------------------------------------------------------------------------------
-//key listener
+//key listeners
 
 var leftPressed = 0;
 var rightPressed=0;
@@ -55,13 +63,22 @@ function keyUp(key) {
   }
 }
 
+window.addEventListener("keypress", keyPress, false);
+function keyPress(key) {
+	if (key.key == " "){
+		playerFire=1;
+	}
+}
+
 //vairables involved in drawing the game
 var redWidth= 0.1;
 var maxX= 1-redWidth;
 var minX= -1+redWidth;
 var redDownSpeed= 2000; //changes the time between each interval of it coming down
-var redBoxRandomness=100; //changes how frequently you want the boxes to change directions
-var redBoxXSpeed=0.01;
+var redBoxRandomness=0; //changes how frequently you want the boxes to change directions **MESSES UP THE COLLISION OCCASIONALLY so it's disabled for now**
+var redBoxXSpeed=0.005;
+var redBoxNum=5;
+var redBoxCollisionPadding=0.01;
 
 //first row
 var firstRowY=0.95;
@@ -81,11 +98,10 @@ var greenX=-0.05; //green starting location
 var greenY=(-1+2*greenWidth);
 
 
-
 //for loop for filling up the arrays
-for(var i=0;i<5;i++){
-	firstRowX[i]= (Math.random()*(maxX-minX)+minX);
-	secondRowX[i]=(Math.random()*(maxX-minX)+minX);
+for(var i=0;i<redBoxNum;i++){
+	firstRowX[i]= (minX)+(maxX*2/redBoxNum*i);
+	secondRowX[i]= (minX)+(maxX*2/redBoxNum*i);
 
 	//direction arrays
 	firstRowXDirection[i]=Math.floor(Math.random()*(2)); //fils it up with 1 or -1
@@ -100,6 +116,22 @@ setInterval(function(){
 	}
 },redDownSpeed);
 
+
+//bullets section------------
+
+//player bullets
+var greenBulletStartY=(-0.85+greenWidth);
+var greenBulletY=greenBulletStartY;
+var greenBulletBase=0.03;
+var greenBulletHeight=0.05;
+var greenBulletX;
+var playerFire=0;
+var greenBullets=[]; //bullet vertices array
+var greenShotsDelay=70; //controls how long in between each shot
+var bulletStopper=greenShotsDelay; //starts the timer
+var greenBulletSpeed=0.03;
+
+//render---------------------------------------
 function render() {
 
 	// Six Vertices
@@ -182,11 +214,34 @@ function render() {
 		vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
 		vec2 (greenX, greenY-(2*greenWidth)),
 
+
 	];
 
+	//BULLETS
+
+	greenBulletStartX=(greenX+(greenWidth/2)); //tracking the greenbox
+
+
+	if(playerFire==1){
+		playerFire=0;
+		if( bulletStopper>=greenShotsDelay){
+			bulletStopper=0;
+			greenBullets.push(vec2(greenBulletStartX,greenBulletStartY));
+			greenBullets.push(vec2(greenBulletStartX-(greenBulletBase/2),greenBulletStartY-greenBulletHeight));
+			greenBullets.push(vec2(greenBulletStartX+(greenBulletBase/2),greenBulletStartY-greenBulletHeight));
+		}
+
+	}
+
+	for(var k=0;k<(greenBullets.length/3);k++){
+		greenBullets[(k*3)][1]+=greenBulletSpeed;
+		greenBullets[(k*3)+1][1]+=greenBulletSpeed;
+		greenBullets[(k*3)+2][1]+=greenBulletSpeed;
+	}
+	bulletStopper+=1; //counts up
 
 	//moving the boxes side to side randomly
-	for(var j=0; j<5;j++){
+	for(var j=0; j<redBoxNum;j++){
 
 		if(firstRowXDirection[j]==1){
 			firstRowX[j]+=redBoxXSpeed;
@@ -203,6 +258,43 @@ function render() {
 		else if(secondRowXDirection[j]==0){
 			secondRowX[j]-=redBoxXSpeed;
 		}
+
+		//detecting collision with each other
+		for(var m=0;m<redBoxNum;m++){
+			if((firstRowX[j]+redWidth+redBoxCollisionPadding)>=firstRowX[m] && (firstRowX[j]+redWidth+redBoxCollisionPadding/5)<= firstRowX[m] && j!=m && firstRowXDirection[j]==1){
+				if(firstRowXDirection[j]==1){
+					firstRowXDirection[j]=0;
+				}
+				else if(firstRowXDirection[j]==0){
+					firstRowXDirection[j]=1;
+				}
+
+				if(firstRowXDirection[m]==1){
+					firstRowXDirection[m]=0;
+				}
+				else if(firstRowXDirection[m]==0){
+					firstRowXDirection[m]=1;
+				}
+			}
+
+			if((secondRowX[j]+redWidth+redBoxCollisionPadding)>=secondRowX[m] && (secondRowX[j]+redWidth+redBoxCollisionPadding/5)<= secondRowX[m] && j!=m && secondRowXDirection[j]==1){
+				if(secondRowXDirection[j]==1 ){
+					secondRowXDirection[j]=0;
+				}
+				else if(secondRowXDirection[j]==0 ){
+					secondRowXDirection[j]=1;
+				}
+
+				if(secondRowXDirection[m]==1 ){
+					secondRowXDirection[m]=0;
+				}
+				else if(secondRowXDirection[m]==0 ){
+					secondRowXDirection[m]=1;
+				}
+			}
+		}
+
+
 
 		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (firstRowX[j])<=(minX-redWidth) || firstRowX[j]>= maxX){
 			if(firstRowXDirection[j]==1){
@@ -224,10 +316,10 @@ function render() {
 	}
 
   //moving the green box
-  if (leftPressed==1){
+  if (leftPressed==1 && greenX>=-1){
     greenX-=greenSpeed;
   }
-  if (rightPressed==1){
+  if (rightPressed==1 && greenX+greenWidth<=1){
     greenX+=greenSpeed;
   }
 
@@ -236,13 +328,29 @@ function render() {
 
 	// document.getElementById("trace").innerHTML=secondRowY;
 
-	// Binding the vertex buffer
+
+	//colors
+
+
+	// Binding the vertex buffer\
 	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.clear( gl.COLOR_BUFFER_BIT );
 
   //boxes
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(boxes), gl.STATIC_DRAW );
   gl.drawArrays( gl.TRIANGLES, 0, boxes.length ); //changed to length so that it's not hard coded in and will self update
+
+	if(greenBullets.length>0){
+		gl.bufferData(gl.ARRAY_BUFFER, flatten(greenBullets), gl.STATIC_DRAW);
+		gl.drawArrays( gl.TRIANGLES, 0, greenBullets.length );
+
+		//removing the Vertices
+		if((greenBullets[greenBullets.length-2][1])>=0.8){ //finds the heighest bullet
+			greenBullets.pop();//pops three times to get rid of all three vertices
+			greenBullets.pop();
+			greenBullets.pop();
+		}
+	}
 
   //bullets
 

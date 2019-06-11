@@ -1,11 +1,12 @@
 
 var canvas;
 var gl;
+// var colors = [
+//     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
+//     vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
+// ];
+var color;
 
-var colors = [
-    vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-    vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
-];
 
 window.onload = function init() {
 
@@ -77,7 +78,7 @@ var minX= -1+redWidth;
 var redDownSpeed= 2000; //changes the time between each interval of it coming down
 var redBoxRandomness=0; //changes how frequently you want the boxes to change directions **MESSES UP THE COLLISION OCCASIONALLY so it's disabled for now**
 var redBoxXSpeed=0.005;
-var redBoxNum=5;
+var redInitialBoxNum=5;
 var redBoxCollisionPadding=0.01;
 
 //first row
@@ -99,9 +100,9 @@ var greenY=(-1+2*greenWidth);
 
 
 //for loop for filling up the arrays
-for(var i=0;i<redBoxNum;i++){
-	firstRowX[i]= (minX)+(maxX*2/redBoxNum*i);
-	secondRowX[i]= (minX)+(maxX*2/redBoxNum*i);
+for(var i=0;i<redInitialBoxNum;i++){
+	firstRowX[i]= (minX)+(maxX*2/redInitialBoxNum*i);
+	secondRowX[i]= (minX)+(maxX*2/redInitialBoxNum*i);
 
 	//direction arrays
 	firstRowXDirection[i]=Math.floor(Math.random()*(2)); //fils it up with 1 or -1
@@ -127,7 +128,7 @@ var greenBulletHeight=0.05;
 var greenBulletX;
 var playerFire=0;
 var greenBullets=[]; //bullet vertices array
-var greenShotsDelay=70; //controls how long in between each shot
+var greenShotsDelay=40; //controls how long in between each shot
 var bulletStopper=greenShotsDelay; //starts the timer
 var greenBulletSpeed=0.03;
 
@@ -135,7 +136,7 @@ var greenBulletSpeed=0.03;
 function render() {
 
 	// Six Vertices
-	var boxes = [
+	var redBoxes = [
 		vec2 (firstRowX[0], firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY-(2*redWidth)),
@@ -206,17 +207,21 @@ function render() {
 		vec2 (secondRowX[4]+redWidth, secondRowY-(2*redWidth)),
 		vec2 (secondRowX[4], secondRowY-(2*redWidth)),
 
+
+
+
+	];
+
+
+  var greenBox=[
     //greenbox, player controlled
     vec2 (greenX, greenY),
 		vec2 (greenX+greenWidth, greenY),
 		vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
 		vec2 (greenX, greenY),
 		vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
-		vec2 (greenX, greenY-(2*greenWidth)),
-
-
-	];
-
+		vec2 (greenX, greenY-(2*greenWidth))
+  ]
 	//BULLETS
 
 	greenBulletStartX=(greenX+(greenWidth/2)); //tracking the greenbox
@@ -244,40 +249,42 @@ function render() {
 	for(var i=0;i<greenBullets.length;i++){
 		for(var j=0;j<firstRowX.length;j++){
 			if(greenBullets[i][0]>=firstRowX[j] && greenBullets[i][0]<=firstRowX[j]+redWidth && greenBullets[i][1]>=firstRowY-redWidth && greenBullets[i][1]<=firstRowY){
-				if(i%3==0){
-					greenBullets.splice(i,1);
-					greenBullets.splice(i+1,1);
-					greenBullets.splice(i+1,1);
-				}
-				else if(i%3==1){
-					greenBullets.splice(i-1,1);
-					greenBullets.splice(i,1);
-					greenBullets.splice(i+1,1);
-				}
-				else if(i%3==2){
-					greenBullets.splice(i-2,1);
-					greenBullets.splice(i-1,1);
-					greenBullets.splice(i,1);
-				}
+        console.log("firstrow",greenBullets[i]);
+				// if(i%3==0){
+				// 	greenBullets.splice(i,1);
+				// 	greenBullets.splice(i+1,1);
+				// 	greenBullets.splice(i+1,1);
+				// }
+				// else if(i%3==1){
+				// 	greenBullets.splice(i-1,1);
+				// 	greenBullets.splice(i,1);
+				// 	greenBullets.splice(i+1,1);
+				// }
+				// else if(i%3==2){
+				// 	greenBullets.splice(i-2,1);
+				// 	greenBullets.splice(i-1,1);
+				// 	greenBullets.splice(i,1);
+				// }
 			}
 		}
 		for(var j2=0;j2<secondRowX.length;j2++){
 			if(greenBullets[i][0]>=secondRowX[j2] && greenBullets[i][0]<=secondRowX[j2]+redWidth && greenBullets[i][1]>=secondRowY-redWidth && greenBullets[i][1]<=secondRowY){
-				if(i%3==0){
-					greenBullets.splice(i,1);
-					greenBullets.splice(i+1,1);
-					greenBullets.splice(i+1,1);
-				}
-				else if(i%3==1){
-					greenBullets.splice(i-1,1);
-					greenBullets.splice(i,1);
-					greenBullets.splice(i+1,1);
-				}
-				else if(i%3==2){
-					greenBullets.splice(i-2,1);
-					greenBullets.splice(i-1,1);
-					greenBullets.splice(i,1);
-				}
+        console.log("secondrow",greenBullets[i]);
+				// if(i%3==0){
+				// 	greenBullets.splice(i,1);
+				// 	greenBullets.splice(i+1,1);
+				// 	greenBullets.splice(i+1,1);
+				// }
+				// else if(i%3==1){
+				// 	greenBullets.splice(i-1,1);
+				// 	greenBullets.splice(i,1);
+				// 	greenBullets.splice(i+1,1);
+				// }
+				// else if(i%3==2){
+				// 	greenBullets.splice(i-2,1);
+				// 	greenBullets.splice(i-1,1);
+				// 	greenBullets.splice(i,1);
+				// }
 			}
 		}
 
@@ -286,7 +293,7 @@ function render() {
 
 
 	//moving the boxes side to side randomly
-	for(var j=0; j<redBoxNum;j++){
+	for(var j=0; j<redBoxes.length/6;j++){
 
 		if(firstRowXDirection[j]==1){
 			firstRowX[j]+=redBoxXSpeed;
@@ -305,7 +312,7 @@ function render() {
 		}
 
 		//detecting collision with each other
-		for(var m=0;m<redBoxNum;m++){
+		for(var m=0;m<redBoxes.length/6;m++){
 			if((firstRowX[j]+redWidth+redBoxCollisionPadding)>=firstRowX[m] && (firstRowX[j]+redWidth+redBoxCollisionPadding/5)<= firstRowX[m] && j!=m && firstRowXDirection[j]==1){
 				if(firstRowXDirection[j]==1){
 					firstRowXDirection[j]=0;
@@ -382,11 +389,24 @@ function render() {
   gl.clear( gl.COLOR_BUFFER_BIT );
 
   //boxes
-	gl.bufferData( gl.ARRAY_BUFFER, flatten(boxes), gl.STATIC_DRAW );
-  gl.drawArrays( gl.TRIANGLES, 0, boxes.length ); //changed to length so that it's not hard coded in and will self update
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(redBoxes), gl.STATIC_DRAW );
+  color=vec4(1,0,0,1);
+  colorLoc=gl.getUniformLocation(program,"color");
+  gl.uniform4fv(colorLoc,color);
+  gl.drawArrays( gl.TRIANGLES, 0, redBoxes.length ); //changed to length so that it's not hard coded in and will self update
+
+  //green box drawing
+  gl.bufferData( gl.ARRAY_BUFFER, flatten(greenBox), gl.STATIC_DRAW );
+  color=vec4(0,1,0,1);
+  colorLoc=gl.getUniformLocation(program,"color");
+  gl.uniform4fv(colorLoc,color);
+  gl.drawArrays( gl.TRIANGLES, 0, greenBox.length );
 
 	if(greenBullets.length>0){
 		gl.bufferData(gl.ARRAY_BUFFER, flatten(greenBullets), gl.STATIC_DRAW);
+    color=vec4(0,1,0,1);
+    colorLoc=gl.getUniformLocation(program,"color");
+    gl.uniform4fv(colorLoc,color);
 		gl.drawArrays( gl.TRIANGLES, 0, greenBullets.length );
 
 		//removing the Vertices

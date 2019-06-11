@@ -2,6 +2,7 @@
 <html>
 
 <link rel="stylesheet" href="gameCSS.css">
+
 <script id="vertex-shader" type="x-shader/x-vertex">
 
 
@@ -23,7 +24,7 @@ uniform vec4 color;
 void
 main()
 {
-    // gl_FragColor = vec4( 255,0,0,1);
+
     gl_FragColor=color;
 
 
@@ -35,6 +36,7 @@ main()
 <script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="gameJS.js"></script>
 
+
 <body>
 	<!-- To put the container in the middle -->
 	<p id="trace"></p>
@@ -45,5 +47,22 @@ main()
 		</canvas>
 	</div>
 
+
+
+
+	<div id="myModal" class="modal">
+
+	  <!-- Modal content -->
+	  <div class="modal-content">
+
+	    <p id="popUpMessage"></p>
+	  </div>
+
+	</div>
+
+
 </body>
+
+<script type="text/javascript" src="otherJS.js"></script>
+
 </html>

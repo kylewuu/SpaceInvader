@@ -48,38 +48,61 @@ var rightPressed=0;
 window.addEventListener("keydown", keyDown, false); //for detecting keydown
 window.addEventListener("keyup", keyUp, false); //for detecting key up
 function keyDown(key) {
-  if (key.key == "ArrowLeft"){
+  if (key.key == "ArrowLeft" || key.key=="a"){ //it's easier and makes more sense to use A as left and D as right
     leftPressed=1;
   }
-  if (key.key == "ArrowRight"){
+  if (key.key == "ArrowRight" || key.key=="d"){
     rightPressed=1;
   }
 }
 function keyUp(key) {
-  if (key.key == "ArrowLeft"){
+  if (key.key == "ArrowLeft" || key.key=="a"){
     leftPressed=0;
   }
-  if (key.key == "ArrowRight"){
+  if (key.key == "ArrowRight" || key.key=="d"){
     rightPressed=0;
   }
 }
 
+//uses space bar or left mouse click to fire
 window.addEventListener("keypress", keyPress, false);
 function keyPress(key) {
 	if (key.key == " "){
 		playerFire=1;
 	}
+	if(key.key=="r"){
+		document.location.reload();//restarts
+	}
+}
+window.onclick=function(){ //added key for left mouse click as well
+	playerFire=1;
 }
 
-//vairables involved in drawing the game
+
+
+//vairables involved in drawing the game--------------------------------
+var greenBox=[
+	//greenbox, player controlled
+	vec2 (greenX, greenY),
+	vec2 (greenX+greenWidth, greenY),
+	vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
+	vec2 (greenX, greenY),
+	vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
+	vec2 (greenX, greenY-(2*greenWidth))
+]
+
+var end=false;
 var redWidth= 0.1;
 var maxX= 1-redWidth;
 var minX= -1+redWidth;
-var redDownSpeed= 2000; //changes the time between each interval of it coming down
+var redDownSpeed= 1000; //changes the time between each interval of it coming down
 var redBoxRandomness=0; //changes how frequently you want the boxes to change directions **MESSES UP THE COLLISION OCCASIONALLY so it's disabled for now**
-var redBoxXSpeed=0.005;
+var redBoxXSpeedInitial=0.005;
 var redInitialBoxNum=5;
 var redBoxCollisionPadding=0.01;
+var redFasterSide=0.0006;
+var minY=-0.72;
+var result; //0= defeat 1= victory
 
 //first row
 var firstRowY=0.95;
@@ -111,26 +134,74 @@ for(var i=0;i<redInitialBoxNum;i++){
 
 //for moving the boxes down
 setInterval(function(){
-	if(firstRowY && secondRowY>= -0.7){
+	if(firstRowY >= minY && end==false){
 		firstRowY+= -0.1;
 		secondRowY+= -0.1;
+		redBoxXSpeedInitial+=redFasterSide;//increasing the speed everytime it comes down a bit
+		redBoxCollisionPadding += redFasterSide*6;
+	}
+	if(firstRowY<=minY && firstRowX.length>0){
+		end=true;
+		result= 0;
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+	}
+	if(secondRowY<=minY && secondRowX.length>0){
+		end=true;
+		result= 0;
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
 	}
 },redDownSpeed);
 
-
 //bullets section------------
+var bulletBase=0.04;
+var bulletHeight=0.06;
 
 //player bullets
 var greenBulletStartY=(-0.85+greenWidth);
 var greenBulletY=greenBulletStartY;
-var greenBulletBase=0.03;
-var greenBulletHeight=0.05;
 var greenBulletX;
 var playerFire=0;
 var greenBullets=[]; //bullet vertices array
 var greenShotsDelay=1; //controls how long in between each shot
 var bulletStopper=greenShotsDelay; //starts the timer
-var greenBulletSpeed=0.03;
+var greenBulletSpeed=0.07;
+
+//red bullets
+var redBullets=[];
+var redBulletRate=1000;
+var redBulletSpeed=0.03;
+
+//interval for firing red
+setInterval(function(){
+	if(secondRowX.length>0 && end==false){
+		for(var i=0; i<secondRowX.length;i++){
+			redBullets.push(vec2(secondRowX[i]+redWidth/2-(bulletBase/2),(secondRowY-redWidth)));
+			redBullets.push(vec2(secondRowX[i]+redWidth/2+(bulletBase/2),(secondRowY-redWidth)));
+			redBullets.push(vec2(secondRowX[i]+redWidth/2,(secondRowY-redWidth-bulletHeight)));
+		}
+	}
+	else if(secondRowX.length==0 && end==false){
+		for(var i=0; i<firstRowX.length;i++){
+		redBullets.push(vec2(firstRowX[i]+redWidth/2-(bulletBase/2),(firstRowY-redWidth)));
+		redBullets.push(vec2(firstRowX[i]+redWidth/2+(bulletBase/2),(firstRowY-redWidth)));
+		redBullets.push(vec2(firstRowX[i]+redWidth/2,(firstRowY-redWidth-bulletHeight)));
+		}
+	}
+}, redBulletRate);
+
+
+
+
 
 //render---------------------------------------
 function render() {
@@ -215,7 +286,8 @@ function render() {
 	];
 
 
-  var greenBox=[
+if(end==false){
+	greenBox=[
     //greenbox, player controlled
     vec2 (greenX, greenY),
 		vec2 (greenX+greenWidth, greenY),
@@ -224,18 +296,20 @@ function render() {
 		vec2 (greenX+greenWidth, greenY-(2*greenWidth)),
 		vec2 (greenX, greenY-(2*greenWidth))
   ]
-	//BULLETS
+}
+
+//BULLETS
 
 	greenBulletStartX=(greenX+(greenWidth/2)); //tracking the greenbox
 
 
-	if(playerFire==1){
+	if(playerFire==1 && end==false){
 		playerFire=0;
 		if( bulletStopper>=greenShotsDelay){
 			bulletStopper=0;
 			greenBullets.push(vec2(greenBulletStartX,greenBulletStartY));
-			greenBullets.push(vec2(greenBulletStartX-(greenBulletBase/2),greenBulletStartY-greenBulletHeight));
-			greenBullets.push(vec2(greenBulletStartX+(greenBulletBase/2),greenBulletStartY-greenBulletHeight));
+			greenBullets.push(vec2(greenBulletStartX-(bulletBase/2),greenBulletStartY-bulletHeight));
+			greenBullets.push(vec2(greenBulletStartX+(bulletBase/2),greenBulletStartY-bulletHeight));
 		}
 
 	}
@@ -245,7 +319,16 @@ function render() {
 		greenBullets[(k*3)+1][1]+=greenBulletSpeed;
 		greenBullets[(k*3)+2][1]+=greenBulletSpeed;
 	}
-	bulletStopper+=1; //counts up
+	bulletStopper+=1; //counts up to create delay between firing
+
+	//red bullets firing
+	for(var f=0;f<(redBullets.length/3);f++){
+		redBullets[(f*3)][1]-=redBulletSpeed;
+		redBullets[(f*3)+1][1]-=redBulletSpeed;
+		redBullets[(f*3)+2][1]-=redBulletSpeed;
+	}
+
+
 
 
 //detecting green missle collision with red boxes
@@ -335,6 +418,43 @@ function render() {
 		}
 	}
 
+//detecting red missiles with player greenbox
+for(var i=0; i<redBullets.length/3;i++){
+	//top vertice
+	if(redBullets[i*3][0]>=greenX && redBullets[i*3][0]<=greenX+greenWidth && redBullets[i*3][1]<=greenY && redBullets>=greenY-greenWidth && greenBox.length==6){
+		end=true; //knows the game has ended
+		result= 0;
+		greenBox.pop(); //pops to get rid of all the vertices in green
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+
+	}
+	else if(redBullets[i*3+1][0]>=greenX && redBullets[i*3+1][0]<=greenX+greenWidth && redBullets[i*3+1][1]<=greenY && redBullets[i*3+1][1]>=greenY-greenWidth && greenBox.length==6){
+		end=true;
+		result= 0;
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+	}
+	else if(redBullets[i*3+2][0]>=greenX && redBullets[i*3+2][0]<=greenX+greenWidth && redBullets[i*3+2][1]<=greenY && redBullets[i*3+2][1]>=greenY-greenWidth && greenBox.length==6){
+		end=true;
+		result= 0;
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+		greenBox.pop();
+	}
+}
+
+
 
 //moving the boxes side to side randomly
 
@@ -342,11 +462,11 @@ function render() {
 	for(var j=0; j<redBoxesFirstRow.length/6;j++){
 
 		if(firstRowXDirection[j]==1){
-			firstRowX[j]+=redBoxXSpeed;
+			firstRowX[j]+=redBoxXSpeedInitial;
 
 		}
 		else if(firstRowXDirection[j]==0){
-			firstRowX[j]-=redBoxXSpeed;
+			firstRowX[j]-=redBoxXSpeedInitial;
 		}
 
 
@@ -383,11 +503,11 @@ function render() {
 	for(var j=0; j<redBoxesSecondRow.length/6;j++){
 
 		if(secondRowXDirection[j]==1){
-			secondRowX[j]+=redBoxXSpeed;
+			secondRowX[j]+=redBoxXSpeedInitial;
 
 		}
 		else if(secondRowXDirection[j]==0){
-			secondRowX[j]-=redBoxXSpeed;
+			secondRowX[j]-=redBoxXSpeedInitial;
 		}
 
 		//detecting collision with each other
@@ -429,6 +549,12 @@ function render() {
     greenX+=greenSpeed;
   }
 
+//seeing if all the enemies are elimiated
+if(firstRowX.length==0 && secondRowX.length==0){
+	end=true;
+	result= 1;
+}
+
 	// Binding the vertex buffer\
 	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.clear( gl.COLOR_BUFFER_BIT );
@@ -444,14 +570,26 @@ function render() {
   color=vec4(1,0,0,1);
   colorLoc=gl.getUniformLocation(program,"color");
   gl.uniform4fv(colorLoc,color);
-  gl.drawArrays( gl.TRIANGLES, 0, redBoxesSecondRow.length ); //changed to length so that it's not hard coded in and will self update
+  gl.drawArrays( gl.TRIANGLES, 0, redBoxesSecondRow.length );
+
+	//red bullets drawing
+	if(redBullets.length>0){
+		gl.bufferData( gl.ARRAY_BUFFER, flatten(redBullets), gl.STATIC_DRAW );
+	  color=vec4(1,0,0,1);
+	  colorLoc=gl.getUniformLocation(program,"color");
+	  gl.uniform4fv(colorLoc,color);
+	  gl.drawArrays( gl.TRIANGLES, 0, redBullets.length );
+	}
 
   //green box drawing
-  gl.bufferData( gl.ARRAY_BUFFER, flatten(greenBox), gl.STATIC_DRAW );
-  color=vec4(0,1,0,1);
-  colorLoc=gl.getUniformLocation(program,"color");
-  gl.uniform4fv(colorLoc,color);
-  gl.drawArrays( gl.TRIANGLES, 0, greenBox.length );
+	if(greenBox.length>0){
+		gl.bufferData( gl.ARRAY_BUFFER, flatten(greenBox), gl.STATIC_DRAW );
+	  color=vec4(0,1,0,1);
+	  colorLoc=gl.getUniformLocation(program,"color");
+	  gl.uniform4fv(colorLoc,color);
+	  gl.drawArrays( gl.TRIANGLES, 0, greenBox.length );
+	}
+
 
 	if(greenBullets.length>0){
 		gl.bufferData(gl.ARRAY_BUFFER, flatten(greenBullets), gl.STATIC_DRAW);
@@ -466,10 +604,27 @@ function render() {
 			greenBullets.pop();
 			greenBullets.pop();
 		}
+
 	}
 
-
-
+	if(redBullets.length>0){
+		if(redBullets[redBullets.length-2][1]<=-1){
+			for(var i=0; i<secondRowX.length;i++){
+				redBullets.pop();
+				redBullets.pop();
+				redBullets.pop();
+			}
+		}
+	}
 
   window.requestAnimationFrame(render);
+	if(end==true){
+		if(result==0){
+			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: to win, destory all of the red enemies before they destory you or reach your green ship"
+		}
+		else if(result==1){
+			document.getElementById("popUpMessage").innerHTML="Victory!<br><br>Congrats!<br><br>Press R to restart or Q to quit"
+		}
+		modal.style.display = "block";
+	}
 }

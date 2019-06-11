@@ -128,15 +128,15 @@ var greenBulletHeight=0.05;
 var greenBulletX;
 var playerFire=0;
 var greenBullets=[]; //bullet vertices array
-var greenShotsDelay=40; //controls how long in between each shot
+var greenShotsDelay=1; //controls how long in between each shot
 var bulletStopper=greenShotsDelay; //starts the timer
 var greenBulletSpeed=0.03;
 
 //render---------------------------------------
 function render() {
 
-	// Six Vertices
-	var redBoxes = [
+// Six Vertices
+	var redBoxesFirstRow = [
 		vec2 (firstRowX[0], firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY-(2*redWidth)),
@@ -170,7 +170,11 @@ function render() {
 		vec2 (firstRowX[4]+redWidth, firstRowY-(2*redWidth)),
 		vec2 (firstRowX[4], firstRowY),
 		vec2 (firstRowX[4]+redWidth, firstRowY-(2*redWidth)),
-		vec2 (firstRowX[4], firstRowY-(2*redWidth)),
+		vec2 (firstRowX[4], firstRowY-(2*redWidth))
+	];
+
+
+	var redBoxesSecondRow=[
 
 		vec2 (secondRowX[0], secondRowY),
 		vec2 (secondRowX[0]+redWidth, secondRowY),
@@ -208,8 +212,6 @@ function render() {
 		vec2 (secondRowX[4], secondRowY-(2*redWidth)),
 
 
-
-
 	];
 
 
@@ -245,55 +247,99 @@ function render() {
 	}
 	bulletStopper+=1; //counts up
 
-	//checking for COLLISION NOT WORKING FOR NOW
-	for(var i=0;i<greenBullets.length;i++){
-		for(var j=0;j<firstRowX.length;j++){
-			if(greenBullets[i][0]>=firstRowX[j] && greenBullets[i][0]<=firstRowX[j]+redWidth && greenBullets[i][1]>=firstRowY-redWidth && greenBullets[i][1]<=firstRowY){
-        console.log("firstrow",greenBullets[i]);
-				// if(i%3==0){
-				// 	greenBullets.splice(i,1);
-				// 	greenBullets.splice(i+1,1);
-				// 	greenBullets.splice(i+1,1);
-				// }
-				// else if(i%3==1){
-				// 	greenBullets.splice(i-1,1);
-				// 	greenBullets.splice(i,1);
-				// 	greenBullets.splice(i+1,1);
-				// }
-				// else if(i%3==2){
-				// 	greenBullets.splice(i-2,1);
-				// 	greenBullets.splice(i-1,1);
-				// 	greenBullets.splice(i,1);
-				// }
-			}
-		}
-		for(var j2=0;j2<secondRowX.length;j2++){
-			if(greenBullets[i][0]>=secondRowX[j2] && greenBullets[i][0]<=secondRowX[j2]+redWidth && greenBullets[i][1]>=secondRowY-redWidth && greenBullets[i][1]<=secondRowY){
-        console.log("secondrow",greenBullets[i]);
-				// if(i%3==0){
-				// 	greenBullets.splice(i,1);
-				// 	greenBullets.splice(i+1,1);
-				// 	greenBullets.splice(i+1,1);
-				// }
-				// else if(i%3==1){
-				// 	greenBullets.splice(i-1,1);
-				// 	greenBullets.splice(i,1);
-				// 	greenBullets.splice(i+1,1);
-				// }
-				// else if(i%3==2){
-				// 	greenBullets.splice(i-2,1);
-				// 	greenBullets.splice(i-1,1);
-				// 	greenBullets.splice(i,1);
-				// }
-			}
-		}
 
+//detecting green missle collision with red boxes
+
+	//bottomrow
+	for(var j=0;j<secondRowX.length;j++){
+		for(var i=0;i<greenBullets.length/3;i++){
+
+				//second row
+			if (greenBullets.length>=3 && redBoxesSecondRow.length>=6){
+				if (greenBullets[i*3][0]>=secondRowX[j] && greenBullets[i*3][0]<=secondRowX[j]+redWidth && greenBullets[i*3][1]>=secondRowY-redWidth && greenBullets[i][1]<=secondRowY){
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+
+					secondRowX.splice(j,1);
+					secondRowXDirection.splice(j,1);
+					redBoxesSecondRow.splice(j*6,6)//6 times because 6 verticies
+
+				}
+				//detecting collision for left vertice
+				else if (greenBullets[i*3+1][0]>=secondRowX[j] && greenBullets[i*3+1][0]<=secondRowX[j]+redWidth && greenBullets[i*3+1][1]>=secondRowY-redWidth && greenBullets[i+1][1]<=secondRowY){
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+
+					secondRowX.splice(j,1);
+					secondRowXDirection.splice(j,1);
+					redBoxesSecondRow.splice(j*6,6);//6 times because 6 verticies
+
+				}
+				//detecting collision for right vertice
+				else if (greenBullets[i*3+2][0]>=secondRowX[j] && greenBullets[i*3+2][0]<=secondRowX[j]+redWidth && greenBullets[i*3+2][1]>=secondRowY-redWidth && greenBullets[i*3+2][1]<=secondRowY){
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+
+					secondRowX.splice(j,1);
+					secondRowXDirection.splice(j,1);
+					redBoxesSecondRow.splice(j*6,6);//6 times because 6 verticies
+
+				}
+			}
+		}
+	}
+
+	//toprow
+	for(var j=0;j<firstRowX.length;j++){
+		for(var i=0;i<greenBullets.length/3;i++){
+
+			//detecting collision for top vertice
+			if (greenBullets.length>=3){
+
+				//firstrow
+				if (greenBullets[i*3][0]>=firstRowX[j] && greenBullets[i*3][0]<=firstRowX[j]+redWidth && greenBullets[i*3][1]>=firstRowY-redWidth && greenBullets[i][1]<=firstRowY){
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+
+					firstRowX.splice(j,1);
+					firstRowXDirection.splice(j,1);
+					redBoxesSecondRow.splice(j*6,6);//6 times because 6 verticies
+				}
+				//detecting collision for left vertice
+				else if (greenBullets[i*3+1][0]>=firstRowX[j] && greenBullets[i*3+1][0]<=firstRowX[j]+redWidth && greenBullets[i*3+1][1]>=firstRowY-redWidth && greenBullets[i+1][1]<=firstRowY){
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+
+					firstRowX.splice(j,1);
+					firstRowXDirection.splice(j,1);
+					redBoxesSecondRow.splice(j*6,6);//6 times because 6 verticies
+				}
+				//detecting collision for right vertice
+				else if (greenBullets[i*3+2][0]>=firstRowX[j] && greenBullets[i*3+2][0]<=firstRowX[j]+redWidth && greenBullets[i*3+2][1]>=firstRowY-redWidth && greenBullets[i*3+2][1]<=firstRowY){
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+					greenBullets.splice(i*3,1);
+
+					firstRowX.splice(j,1);
+					firstRowXDirection.splice(j,1);
+					redBoxesSecondRow.splice(j*6,6);//6 times because 6 verticies
+				}
+
+
+			}
+		}
 	}
 
 
+//moving the boxes side to side randomly
 
-	//moving the boxes side to side randomly
-	for(var j=0; j<redBoxes.length/6;j++){
+	//firstrow
+	for(var j=0; j<redBoxesFirstRow.length/6;j++){
 
 		if(firstRowXDirection[j]==1){
 			firstRowX[j]+=redBoxXSpeed;
@@ -303,16 +349,9 @@ function render() {
 			firstRowX[j]-=redBoxXSpeed;
 		}
 
-		if(secondRowXDirection[j]==1){
-			secondRowX[j]+=redBoxXSpeed;
-
-		}
-		else if(secondRowXDirection[j]==0){
-			secondRowX[j]-=redBoxXSpeed;
-		}
 
 		//detecting collision with each other
-		for(var m=0;m<redBoxes.length/6;m++){
+		for(var m=0;m<redBoxesFirstRow.length/6;m++){
 			if((firstRowX[j]+redWidth+redBoxCollisionPadding)>=firstRowX[m] && (firstRowX[j]+redWidth+redBoxCollisionPadding/5)<= firstRowX[m] && j!=m && firstRowXDirection[j]==1){
 				if(firstRowXDirection[j]==1){
 					firstRowXDirection[j]=0;
@@ -328,6 +367,31 @@ function render() {
 					firstRowXDirection[m]=1;
 				}
 			}
+		}
+
+		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (firstRowX[j])<=(minX-redWidth) || firstRowX[j]>= maxX){
+			if(firstRowXDirection[j]==1){
+				firstRowXDirection[j]=0;
+			}
+			else if(firstRowXDirection[j]==0){
+				firstRowXDirection[j]=1;
+			}
+		}
+	}
+
+	//second row stuffs
+	for(var j=0; j<redBoxesSecondRow.length/6;j++){
+
+		if(secondRowXDirection[j]==1){
+			secondRowX[j]+=redBoxXSpeed;
+
+		}
+		else if(secondRowXDirection[j]==0){
+			secondRowX[j]-=redBoxXSpeed;
+		}
+
+		//detecting collision with each other
+		for(var m=0;m<redBoxesSecondRow.length/6;m++){
 
 			if((secondRowX[j]+redWidth+redBoxCollisionPadding)>=secondRowX[m] && (secondRowX[j]+redWidth+redBoxCollisionPadding/5)<= secondRowX[m] && j!=m && secondRowXDirection[j]==1){
 				if(secondRowXDirection[j]==1 ){
@@ -346,16 +410,6 @@ function render() {
 			}
 		}
 
-
-
-		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (firstRowX[j])<=(minX-redWidth) || firstRowX[j]>= maxX){
-			if(firstRowXDirection[j]==1){
-				firstRowXDirection[j]=0;
-			}
-			else if(firstRowXDirection[j]==0){
-				firstRowXDirection[j]=1;
-			}
-		}
 		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (secondRowX[j])<=(minX-redWidth) || secondRowX[j]>= (maxX)){
 			if(secondRowXDirection[j]==1){
 				secondRowXDirection[j]=0;
@@ -375,25 +429,22 @@ function render() {
     greenX+=greenSpeed;
   }
 
-
-
-
-	// document.getElementById("trace").innerHTML=secondRowY;
-
-
-	//colors
-
-
 	// Binding the vertex buffer\
 	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.clear( gl.COLOR_BUFFER_BIT );
 
   //boxes
-	gl.bufferData( gl.ARRAY_BUFFER, flatten(redBoxes), gl.STATIC_DRAW );
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(redBoxesFirstRow), gl.STATIC_DRAW );
   color=vec4(1,0,0,1);
   colorLoc=gl.getUniformLocation(program,"color");
   gl.uniform4fv(colorLoc,color);
-  gl.drawArrays( gl.TRIANGLES, 0, redBoxes.length ); //changed to length so that it's not hard coded in and will self update
+  gl.drawArrays( gl.TRIANGLES, 0, redBoxesFirstRow.length ); //changed to length so that it's not hard coded in and will self update
+
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(redBoxesSecondRow), gl.STATIC_DRAW );
+  color=vec4(1,0,0,1);
+  colorLoc=gl.getUniformLocation(program,"color");
+  gl.uniform4fv(colorLoc,color);
+  gl.drawArrays( gl.TRIANGLES, 0, redBoxesSecondRow.length ); //changed to length so that it's not hard coded in and will self update
 
   //green box drawing
   gl.bufferData( gl.ARRAY_BUFFER, flatten(greenBox), gl.STATIC_DRAW );
@@ -409,7 +460,7 @@ function render() {
     gl.uniform4fv(colorLoc,color);
 		gl.drawArrays( gl.TRIANGLES, 0, greenBullets.length );
 
-		//removing the Vertices
+		//removing the bullets after it went past
 		if((greenBullets[greenBullets.length-2][1])>=1){ //finds the heighest bullet
 			greenBullets.pop();//pops three times to get rid of all three vertices
 			greenBullets.pop();
@@ -417,7 +468,7 @@ function render() {
 		}
 	}
 
-  //bullets
+
 
 
   window.requestAnimationFrame(render);

@@ -36,9 +36,13 @@ Some addition features and notes that have been added are:
 --The game can be found at https://github.com/kylewuu/SpaceInvader 
 
 --The description div and the canvas spaces itself out when the screenheight is large enough
+
+--If the player gets hit right as they pause, they still lose so the pause function doesn't get abused
+
+--Even when you're moving and press pause, it'll stop right away
 ]
 
 
 Extra Notes:
 
-The css has been put onto the HTML file because the instructions only asked for one HTML along with a JS file and not a css file. All of the Javascript has been combined into one js file due to the same reason.
+The css has been put onto the HTML file because the instructions only asked for one HTML along with a JS file and not a css file. All of the Javascript has been combined into one js file due to the same reason. Common files are also included.

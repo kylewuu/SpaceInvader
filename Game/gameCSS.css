@@ -1,12 +1,39 @@
+.{
+	padding:0;
+	margin:0;
+}
+
 body{
+	background-color: black;
+	text-align:center;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	color: white;
+	padding:0;
+	margin:0;
+
+	/* Make text not selectible so when you fire with left mouse it's not annoying */
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
 
 }
 
-#canvasContainer{
-	text-align: center;
+#gl-canvas{
+	border-width: 4px;
+	border-color: #1b2efc;
+	border-style: solid;
+	border-radius: 15px;
 }
 
-.modal {
+#canvasContainer {
+	padding: 0 0 3%;
+}
+
+
+.popUpWindowClass {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -20,14 +47,55 @@ body{
 }
 
 /* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
+.popUpContent {
+  background-color: black;
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
+	border-radius: 10px;
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
 #popUpMessage{
 	text-align: center;
+}
+
+#description{
+	text-align: left;
+	padding-left: 1%;
+	padding-top: 0%;
+	margin-top: 0;
+	display: inline-block;
+
+}
+#title{
+	text-align: center;
+	padding-bottom: 0;
+	margin-bottom: 0;
+	font-size: 180%;
+
+}
+
+#descriptionContainer{
+	width: 80%;
+	margin: 0 auto;
+	border-width: 4px;
+	border-color: #1b2efc;
+	border-style: solid;
+	border-radius: 15px;
+
+}
+
+@media only screen and (max-height: 930px) {
+  #canvasContainer {
+    padding: 0 0 0;
+  }
+	#title{
+		text-align: left;
+		padding-left: 1%;
+		padding-top: 0%;
+		margin-top: 0;
+		display: inline-block;
+		font-size: 100%;
+	}
 }

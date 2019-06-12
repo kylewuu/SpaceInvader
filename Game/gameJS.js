@@ -40,6 +40,10 @@ window.onload = function init() {
     render();
 };
 
+//loading the popupwindow
+var popUpWindow = document.getElementById("popUpWindow");
+var pause;
+
 //-------------------------------------------------------------------------------
 //key listeners
 
@@ -51,9 +55,10 @@ function keyDown(key) {
   if (key.key == "ArrowLeft" || key.key=="a"){ //it's easier and makes more sense to use A as left and D as right
     leftPressed=1;
   }
-  if (key.key == "ArrowRight" || key.key=="d"){
+  if (key.key == "ArrowRight" || key.key=="d" ){
     rightPressed=1;
   }
+
 }
 function keyUp(key) {
   if (key.key == "ArrowLeft" || key.key=="a"){
@@ -62,6 +67,14 @@ function keyUp(key) {
   if (key.key == "ArrowRight" || key.key=="d"){
     rightPressed=0;
   }
+	if(key.getModifierState("CapsLock")){
+		popUpWindow.style.display = "block";
+		document.getElementById("popUpMessage").innerHTML="PAUSED<br>DISABLE CAPSLOCK TO KEEP PLAYING"
+		pause=true;
+	}else{
+		popUpWindow.style.display = "none";
+		pause= false;
+	}
 }
 
 //uses space bar or left mouse click to fire
@@ -72,6 +85,9 @@ function keyPress(key) {
 	}
 	if(key.key=="r"){
 		document.location.reload();//restarts
+	}
+	if(key.key=="q"){
+		window.close();
 	}
 }
 window.onclick=function(){ //added key for left mouse click as well
@@ -134,7 +150,7 @@ for(var i=0;i<redInitialBoxNum;i++){
 
 //for moving the boxes down
 setInterval(function(){
-	if(firstRowY >= minY && end==false){
+	if(firstRowY >= minY && end==false && pause==false){
 		firstRowY+= -0.1;
 		secondRowY+= -0.1;
 		redBoxXSpeedInitial+=redFasterSide;//increasing the speed everytime it comes down a bit
@@ -172,25 +188,25 @@ var greenBulletY=greenBulletStartY;
 var greenBulletX;
 var playerFire=0;
 var greenBullets=[]; //bullet vertices array
-var greenShotsDelay=1; //controls how long in between each shot
+var greenShotsDelay=40; //controls how long in between each shot i found that 40 is the nicest number
 var bulletStopper=greenShotsDelay; //starts the timer
 var greenBulletSpeed=0.07;
 
 //red bullets
 var redBullets=[];
-var redBulletRate=1000;
+var redBulletRate=1700;
 var redBulletSpeed=0.03;
 
 //interval for firing red
 setInterval(function(){
-	if(secondRowX.length>0 && end==false){
+	if(secondRowX.length>0 && end==false && pause==false){
 		for(var i=0; i<secondRowX.length;i++){
 			redBullets.push(vec2(secondRowX[i]+redWidth/2-(bulletBase/2),(secondRowY-redWidth)));
 			redBullets.push(vec2(secondRowX[i]+redWidth/2+(bulletBase/2),(secondRowY-redWidth)));
 			redBullets.push(vec2(secondRowX[i]+redWidth/2,(secondRowY-redWidth-bulletHeight)));
 		}
 	}
-	else if(secondRowX.length==0 && end==false){
+	else if(secondRowX.length==0 && end==false && pause==false){
 		for(var i=0; i<firstRowX.length;i++){
 		redBullets.push(vec2(firstRowX[i]+redWidth/2-(bulletBase/2),(firstRowY-redWidth)));
 		redBullets.push(vec2(firstRowX[i]+redWidth/2+(bulletBase/2),(firstRowY-redWidth)));
@@ -303,7 +319,7 @@ if(end==false){
 	greenBulletStartX=(greenX+(greenWidth/2)); //tracking the greenbox
 
 
-	if(playerFire==1 && end==false){
+	if(playerFire==1 && end==false && pause==false){
 		playerFire=0;
 		if( bulletStopper>=greenShotsDelay){
 			bulletStopper=0;
@@ -620,11 +636,11 @@ if(firstRowX.length==0 && secondRowX.length==0){
   window.requestAnimationFrame(render);
 	if(end==true){
 		if(result==0){
-			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: to win, destory all of the red enemies before they destory you or reach your green ship"
+			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: To win, destory all of the red enemies before they destory you or reach your green ship. Also, the notice that the upperrow of enemies don't start shooting until all of the lowerrow has been destoryed"
 		}
 		else if(result==1){
-			document.getElementById("popUpMessage").innerHTML="Victory!<br><br>Congrats!<br><br>Press R to restart or Q to quit"
+			document.getElementById("popUpMessage").innerHTML="VICTORY<br><br>Congrats!<br><br>Press R to restart or Q to quit"
 		}
-		modal.style.display = "block";
+		popUpWindow.style.display = "block";
 	}
 }

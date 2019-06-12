@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<link rel="stylesheet" href="gameCSS.css">
 
 <script id="vertex-shader" type="x-shader/x-vertex">
 
@@ -34,12 +33,12 @@ main()
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
-<script type="text/javascript" src="gameJS.js"></script>
+
 
 
 <body>
 	<!-- To put the container in the middle -->
-	<p id="trace"></p>
+
 
 	<div id="canvasContainer">
 		<canvas id="gl-canvas" width="1000" height="500" style="float:middle;">
@@ -48,21 +47,146 @@ main()
 	</div>
 
 
-
-
-	<div id="myModal" class="modal">
+	<div id="popUpWindow" class="popUpWindowClass">
 
 	  <!-- Modal content -->
-	  <div class="modal-content">
+	  <div class="popUpContent">
 
 	    <p id="popUpMessage"></p>
 	  </div>
 
 	</div>
 
+	<div id="descriptionContainer">
+		
+		<p id="description">
+
+			<br />
+			CONTROLS:
+			<br />
+			Move left and Right: A or LeftArrow and D or RightArrow
+			<br />
+			Fire: SPACE or Left Mouse Click
+			<br />
+			R: RESTART
+			<br />
+			Q: QUIT
+			<br />
+			The goal of the game is to destory the red enemeies by firing missiles at them while avoiding the red missiles. Victory is achieved if all the enemies are defeated before they reach the bottom of the screen or before they destory you.
+		</p>
+	</div>
+
+
 
 </body>
 
-<script type="text/javascript" src="otherJS.js"></script>
+
+<script type="text/javascript" src="gameJS.js"></script>
 
 </html>
+
+<style>
+	.{
+		padding:0;
+		margin:0;
+	}
+
+	body{
+		background-color: black;
+		text-align:center;
+		font-family: "Trebuchet MS", Helvetica, sans-serif;
+		color: white;
+		padding:0;
+		margin:0;
+
+		/* Make text not selectible so when you fire with left mouse it's not annoying */
+		-webkit-touch-callout: none; /* iOS Safari */
+	    -webkit-user-select: none; /* Safari */
+	     -khtml-user-select: none; /* Konqueror HTML */
+	       -moz-user-select: none; /* Firefox */
+	        -ms-user-select: none; /* Internet Explorer/Edge */
+	            user-select: none;
+
+	}
+
+	#gl-canvas{
+		border-width: 4px;
+		border-color: #1b2efc;
+		border-style: solid;
+		border-radius: 15px;
+	}
+
+	#canvasContainer {
+		padding: 0 0 3%;
+	}
+
+
+	.popUpWindowClass {
+	  display: none; /* Hidden by default */
+	  position: fixed; /* Stay in place */
+	  z-index: 1; /* Sit on top */
+	  left: 0;
+	  top: 0;
+	  width: 100%; /* Full width */
+	  height: 100%; /* Full height */
+	  overflow: auto; /* Enable scroll if needed */
+	  background-color: rgb(0,0,0); /* Fallback color */
+	  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Modal Content/Box */
+	.popUpContent {
+	  background-color: black;
+	  margin: 15% auto; /* 15% from the top and centered */
+	  padding: 20px;
+	  border: 1px solid #888;
+		border-radius: 10px;
+	  width: 80%; /* Could be more or less, depending on screen size */
+	}
+
+	#popUpMessage{
+		text-align: center;
+	}
+
+	#description{
+		text-align: left;
+		padding-left: 1%;
+		padding-top: 0%;
+		margin-top: 0;
+		display: inline-block;
+
+	}
+	#title{
+		text-align: center;
+		padding-bottom: 0;
+		margin-bottom: 0;
+		font-size: 180%;
+
+	}
+
+	#descriptionContainer{
+		width: 80%;
+		margin: 0 auto;
+		border-width: 4px;
+		border-color: white;
+		border-style: solid;
+		border-radius: 15px;
+
+	}
+
+	@media only screen and (max-height: 930px) {
+	  #canvasContainer {
+	    padding: 0 0 0;
+	  }
+		#title{
+			text-align: left;
+			padding-left: 1%;
+			padding-top: 0%;
+			margin-top: 0;
+			display: inline-block;
+			font-size: 100%;
+		}
+	}
+
+
+</style>

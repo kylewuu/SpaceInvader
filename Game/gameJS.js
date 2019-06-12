@@ -1,10 +1,7 @@
 
 var canvas;
 var gl;
-// var colors = [
-//     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-//     vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
-// ];
+
 var color;
 
 
@@ -44,6 +41,8 @@ window.onload = function init() {
 var popUpWindow = document.getElementById("popUpWindow");
 var pause;
 
+
+
 //-------------------------------------------------------------------------------
 //key listeners
 
@@ -67,7 +66,7 @@ function keyUp(key) {
   if (key.key == "ArrowRight" || key.key=="d"){
     rightPressed=0;
   }
-	if(key.getModifierState("CapsLock")){
+	if(key.getModifierState("CapsLock")){ //capslock for pause
 		popUpWindow.style.display = "block";
 		document.getElementById("popUpMessage").innerHTML="PAUSED<br>DISABLE CAPSLOCK TO KEEP PLAYING"
 		pause=true;
@@ -97,7 +96,7 @@ window.onclick=function(){ //added key for left mouse click as well
 
 
 //vairables involved in drawing the game--------------------------------
-var greenBox=[
+var greenBox=[ //initialize greenbox for player
 	//greenbox, player controlled
 	vec2 (greenX, greenY),
 	vec2 (greenX+greenWidth, greenY),
@@ -107,10 +106,10 @@ var greenBox=[
 	vec2 (greenX, greenY-(2*greenWidth))
 ]
 
-var end=false;
-var redWidth= 0.1;
-var maxX= 1-redWidth;
-var minX= -1+redWidth;
+var end=false; //game has not ended
+var redWidth= 0.1; //redbox width
+var maxX= 1-redWidth; //max screen x
+var minX= -1+redWidth; //in screen x
 var redDownSpeed= 1000; //changes the time between each interval of it coming down
 var redBoxRandomness=0; //changes how frequently you want the boxes to change directions **MESSES UP THE COLLISION OCCASIONALLY so it's disabled for now**
 var redBoxXSpeedInitial=0.005;
@@ -217,12 +216,10 @@ setInterval(function(){
 
 
 
-
-
 //render---------------------------------------
 function render() {
 
-// Six Vertices
+// red boxes separated into two sections, first and second rows
 	var redBoxesFirstRow = [
 		vec2 (firstRowX[0], firstRowY),
 		vec2 (firstRowX[0]+redWidth, firstRowY),
@@ -301,7 +298,7 @@ function render() {
 
 	];
 
-
+//deletes the greenbox is end is true, aka the game has ended
 if(end==false){
 	greenBox=[
     //greenbox, player controlled
@@ -318,7 +315,7 @@ if(end==false){
 
 	greenBulletStartX=(greenX+(greenWidth/2)); //tracking the greenbox
 
-
+	//player firing bullets
 	if(playerFire==1 && end==false && pause==false){
 		playerFire=0;
 		if( bulletStopper>=greenShotsDelay){
@@ -330,6 +327,7 @@ if(end==false){
 
 	}
 
+	//moves it up
 	for(var k=0;k<(greenBullets.length/3);k++){
 		greenBullets[(k*3)][1]+=greenBulletSpeed;
 		greenBullets[(k*3)+1][1]+=greenBulletSpeed;
@@ -349,11 +347,11 @@ if(end==false){
 
 //detecting green missle collision with red boxes
 
-	//bottomrow
+
 	for(var j=0;j<secondRowX.length;j++){
 		for(var i=0;i<greenBullets.length/3;i++){
 
-				//second row
+			//bottomrow
 			if (greenBullets.length>=3 && redBoxesSecondRow.length>=6){
 				if (greenBullets[i*3][0]>=secondRowX[j] && greenBullets[i*3][0]<=secondRowX[j]+redWidth && greenBullets[i*3][1]>=secondRowY-redWidth && greenBullets[i][1]<=secondRowY){
 					greenBullets.splice(i*3,1);
@@ -568,7 +566,10 @@ for(var i=0; i<redBullets.length/3;i++){
 //seeing if all the enemies are elimiated
 if(firstRowX.length==0 && secondRowX.length==0){
 	end=true;
-	result= 1;
+	if(result!=2){
+		result= 1;
+	}
+
 }
 
 	// Binding the vertex buffer\
@@ -636,13 +637,27 @@ if(firstRowX.length==0 && secondRowX.length==0){
   window.requestAnimationFrame(render);
 	if(end==true){
 		if(result==0){
-			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: To win, destory all of the red enemies before they destory you or reach your green ship. Also, the notice that the upperrow of enemies don't start shooting until all of the lowerrow has been destoryed"
-			document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)";
+			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: To win, destory all of the red enemies before they destory you or reach your green ship. Also, the notice that the top row of enemies don't start shooting until all of the bottom row have all been destoryed"
+			document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)"; //defeat flash red
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,0.3)";},300);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)";},450);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,0.3)";},600);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)";},750);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,0.3)";},900);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)";},1050);
+			result=2;
 		}
 		else if(result==1){
 			document.getElementById("popUpMessage").innerHTML="VICTORY<br><br>Congrats!<br><br>Press R to restart or Q to quit"
-			document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,1)";
+			document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,1))"; //victory flash green
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,0.3)";},300);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,1)";},450);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,0.3)";},600);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,1)";},750);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,0.3)";},900);
+			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,1";},1050);
+			result=2;
 		}
-		popUpWindow.style.display = "block";
+		popUpWindow.style.display = "block"; //keeps the popup open
 	}
 }

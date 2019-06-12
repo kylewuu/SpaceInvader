@@ -76,7 +76,7 @@ main()
 			<br />
 			CAPSLOCK: PAUSE
 			<br />
-			The goal of the game is to destory the red enemeies by firing missiles at them while avoiding the red missiles. Victory is achieved if all the enemies are defeated before they reach the bottom of the screen or before they destory you.
+			The goal of the game is to destory the red enemies by firing missiles at them while avoiding the red missiles. Victory is achieved if all the enemies are defeated before they reach the bottom of the screen.
 		</p>
 	</div>
 
@@ -115,7 +115,7 @@ main()
 
 	#gl-canvas{
 		border-width: 4px;
-		border-color: rgba(255,0,0,0.4);
+		border-color: rgba(0,0,255,1);
 		border-style: solid;
 		border-radius: 15px;
 
@@ -175,6 +175,7 @@ main()
 
 	}
 
+	/* to space out the description and canvas if the screen allows it, aka when it's big enough */
 	@media only screen and (max-height: 930px) {
 	  #canvasContainer {
 	    padding: 0 0 0;

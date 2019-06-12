@@ -39,6 +39,9 @@ main()
 <body>
 	<!-- To put the container in the middle -->
 
+	<p id="title">
+		SPACE INVADER
+	</p>
 
 	<div id="canvasContainer">
 		<canvas id="gl-canvas" width="1000" height="500" style="float:middle;">
@@ -57,11 +60,12 @@ main()
 
 	</div>
 
+	<hr id="line" />
+
 	<div id="descriptionContainer">
-		
+
 		<p id="description">
 
-			<br />
 			CONTROLS:
 			<br />
 			Move left and Right: A or LeftArrow and D or RightArrow
@@ -111,9 +115,10 @@ main()
 
 	#gl-canvas{
 		border-width: 4px;
-		border-color: #1b2efc;
+		border-color: rgba(255,0,0,0.4);
 		border-style: solid;
 		border-radius: 15px;
+
 	}
 
 	#canvasContainer {
@@ -167,10 +172,6 @@ main()
 	#descriptionContainer{
 		width: 80%;
 		margin: 0 auto;
-		border-width: 4px;
-		border-color: white;
-		border-style: solid;
-		border-radius: 15px;
 
 	}
 
@@ -186,6 +187,11 @@ main()
 			display: inline-block;
 			font-size: 100%;
 		}
+
+	}
+
+	#line{
+		width: 80%;
 	}
 
 

@@ -637,9 +637,11 @@ if(firstRowX.length==0 && secondRowX.length==0){
 	if(end==true){
 		if(result==0){
 			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: To win, destory all of the red enemies before they destory you or reach your green ship. Also, the notice that the upperrow of enemies don't start shooting until all of the lowerrow has been destoryed"
+			document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)";
 		}
 		else if(result==1){
 			document.getElementById("popUpMessage").innerHTML="VICTORY<br><br>Congrats!<br><br>Press R to restart or Q to quit"
+			document.getElementById("gl-canvas").style.borderColor= "rgba(0,255,0,1)";
 		}
 		popUpWindow.style.display = "block";
 	}

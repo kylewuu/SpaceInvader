@@ -118,13 +118,15 @@ var redWidth= 0.1; //redbox width
 var maxX= 1-redWidth; //max screen x
 var minX= -1+redWidth; //in screen x
 var redDownSpeed= 1000; //changes the time between each interval of it coming down
-var redBoxRandomness=0; //changes how frequently you want the boxes to change directions **MESSES UP THE COLLISION OCCASIONALLY so it's disabled for now**
+var redBoxRandomness=100; //changes how frequently you want the boxes to change directions
 var redBoxXSpeedInitial=0.005;
 var redInitialBoxNum=5;
 var redBoxCollisionPadding=0.01;
 var redFasterSide=0.0006;
 var minY=-0.72;
 var result; //0= defeat 1= victory
+var redRandomDirectionWait=10;
+var redRandomDirectionWaitCount=0;
 
 //first row
 var firstRowY=0.95;
@@ -197,6 +199,7 @@ var greenBullets=[]; //bullet vertices array
 var greenShotsDelay=40; //controls how long in between each shot i found that 40 is the nicest number
 var bulletStopper=greenShotsDelay; //starts the timer
 var greenBulletSpeed=0.07;
+var redChangeRand=500;
 
 //red bullets
 var redBullets=[];
@@ -476,11 +479,54 @@ for(var i=0; i<redBullets.length/3;i++){
 }
 
 
-
 //moving the boxes side to side randomly
+
+for(var j=0; j<redBoxesFirstRow.length/6;j++){
+	if((firstRowX[j])<=(minX-redWidth) || firstRowX[j]>= maxX){
+		if(firstRowXDirection[j]==1 ){
+			firstRowXDirection[j]=0;
+		}
+		else if(firstRowXDirection[j]==0){
+			firstRowXDirection[j]=1;
+		}
+	}
+}
+for(var j=0; j<redBoxesSecondRow.length/6;j++){
+if((secondRowX[j])<=(minX-redWidth) || secondRowX[j]>= (maxX)){
+	if(secondRowXDirection[j]==1){
+		secondRowXDirection[j]=0;
+	}
+	else if(secondRowXDirection[j]==0){
+		secondRowXDirection[j]=1;
+	}
+}
+}
+for(var j=0; j<redBoxesFirstRow.length/6;j++){
+	if(Math.floor(Math.random()*(redBoxRandomness)==1 && redRandomDirectionWaitCount>redRandomDirectionWait)){
+		if(firstRowXDirection[j]==1){
+			firstRowXDirection[j]=0;
+		}
+		else if(firstRowXDirection[j]==0){
+			firstRowXDirection[j]=1;
+		}
+	}
+}
+for(var j=0; j<redBoxesSecondRow.length/6;j++){
+if(Math.floor(Math.random()*(redBoxRandomness))==1 && redRandomDirectionWaitCount>redRandomDirectionWait){
+	if(secondRowXDirection[j]==1){
+		secondRowXDirection[j]=0;
+	}
+	else if(secondRowXDirection[j]==0){
+		secondRowXDirection[j]=1;
+	}
+}
+}
+redRandomDirectionWaitCount+=1;
+
 
 	//firstrow
 	for(var j=0; j<redBoxesFirstRow.length/6;j++){
+
 
 		if(firstRowXDirection[j]==1){
 			firstRowX[j]+=redBoxXSpeedInitial;
@@ -490,34 +536,29 @@ for(var i=0; i<redBullets.length/3;i++){
 			firstRowX[j]-=redBoxXSpeedInitial;
 		}
 
-
 		//detecting collision with each other
 		for(var m=0;m<redBoxesFirstRow.length/6;m++){
 			if((firstRowX[j]+redWidth+redBoxCollisionPadding)>=firstRowX[m] && (firstRowX[j]+redWidth+redBoxCollisionPadding/5)<= firstRowX[m] && j!=m && firstRowXDirection[j]==1){
 				if(firstRowXDirection[j]==1){
 					firstRowXDirection[j]=0;
+					redRandomDirectionWaitCount=0;
 				}
 				else if(firstRowXDirection[j]==0){
 					firstRowXDirection[j]=1;
+					redRandomDirectionWaitCount=0;
 				}
 
 				if(firstRowXDirection[m]==1){
 					firstRowXDirection[m]=0;
+					redRandomDirectionWaitCount=0;
 				}
 				else if(firstRowXDirection[m]==0){
 					firstRowXDirection[m]=1;
+					redRandomDirectionWaitCount=0;
 				}
 			}
 		}
 
-		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (firstRowX[j])<=(minX-redWidth) || firstRowX[j]>= maxX){
-			if(firstRowXDirection[j]==1){
-				firstRowXDirection[j]=0;
-			}
-			else if(firstRowXDirection[j]==0){
-				firstRowXDirection[j]=1;
-			}
-		}
 	}
 
 	//second row stuffs
@@ -534,31 +575,29 @@ for(var i=0; i<redBullets.length/3;i++){
 		//detecting collision with each other
 		for(var m=0;m<redBoxesSecondRow.length/6;m++){
 
+
 			if((secondRowX[j]+redWidth+redBoxCollisionPadding)>=secondRowX[m] && (secondRowX[j]+redWidth+redBoxCollisionPadding/5)<= secondRowX[m] && j!=m && secondRowXDirection[j]==1){
 				if(secondRowXDirection[j]==1 ){
 					secondRowXDirection[j]=0;
+					redRandomDirectionWaitCount=0;
 				}
 				else if(secondRowXDirection[j]==0 ){
 					secondRowXDirection[j]=1;
+					redRandomDirectionWaitCount=0;
 				}
 
 				if(secondRowXDirection[m]==1 ){
 					secondRowXDirection[m]=0;
+					redRandomDirectionWaitCount=0;
 				}
 				else if(secondRowXDirection[m]==0 ){
 					secondRowXDirection[m]=1;
+					redRandomDirectionWaitCount=0;
 				}
 			}
 		}
 
-		if(Math.floor(Math.random()*(redBoxRandomness))==1 || (secondRowX[j])<=(minX-redWidth) || secondRowX[j]>= (maxX)){
-			if(secondRowXDirection[j]==1){
-				secondRowXDirection[j]=0;
-			}
-			else if(secondRowXDirection[j]==0){
-				secondRowXDirection[j]=1;
-			}
-		}
+
 
 	}
 

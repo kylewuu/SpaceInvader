@@ -683,7 +683,7 @@ if(firstRowX.length==0 && secondRowX.length==0){
   window.requestAnimationFrame(render);
 	if(end==true){
 		if(result==0){
-			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get 'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: To win, destory all of the red enemies before they destory you or reach your green ship. Also, the notice that the top row of enemies don't start shooting until all of the bottom row have all been destoryed"
+			document.getElementById("popUpMessage").innerHTML="Defeat<br><br>We'll get 'em next time!<br><br>Press R to restart or Q to quit<br><br>Hint: To win, destory all of the red enemies before they destory you or reach your green ship. Also, notice that the top row of enemies don't start shooting until all of the bottom row have all been destoryed"
 			document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)"; //defeat flash red
 			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,0.3)";},300);
 			setTimeout(function(){document.getElementById("gl-canvas").style.borderColor= "rgba(255,0,0,1)";},450);
